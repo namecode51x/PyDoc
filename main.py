@@ -28,11 +28,17 @@ async def on_message(message):
 make mistakes with its messages and can receive 
 and respond to user messages."""
     if message.author == bot.user:
+
+        return
+    if not message.content.startswith("!"):
         return
     message_list = [
     {"role": "user", "content": message.content}
 ]
-    ai_message = await ai.chat.completions.create(model = model_ai, messages = message_list)
+    ai_message = ai.chat.completions.create(model = model_ai, messages = message_list)
     respond = ai_message.choices [0].message.content
-    await message.channel.send(respond)
+    while respond:
+        piece = respond[:2000]
+        await message.channel.send(piece)
+        respond = respond[2000:]
 bot.run(token)
